@@ -1,7 +1,4 @@
 :root {
-  --blur: 3px;
-  --contrast: 130%;
-  --saturate: 40%;
   color-scheme: light dark;
 }
 
@@ -71,6 +68,13 @@ header p {
 
 .stage.hidden { display: none; }
 
+.image-area {
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  max-width: 100%;
+}
+
 .image-wrap {
   max-width: 100%;
   max-height: 70vh;
@@ -78,7 +82,6 @@ header p {
   border-radius: 8px;
   display: inline-block;
   vertical-align: top;
-  position: relative;
 }
 
 .grid-overlay {
@@ -89,10 +92,10 @@ header p {
   mix-blend-mode: difference;
 }
 
-.image-wrap.grid-thirds .grid-overlay,
-.image-wrap.grid-cross .grid-overlay { display: block; }
+.image-area.grid-thirds .grid-overlay,
+.image-area.grid-cross .grid-overlay { display: block; }
 
-.image-wrap.grid-thirds .grid-overlay {
+.image-area.grid-thirds .grid-overlay {
   background-image:
     linear-gradient(#fff, #fff),
     linear-gradient(#fff, #fff),
@@ -103,7 +106,7 @@ header p {
   background-repeat: no-repeat;
 }
 
-.image-wrap.grid-cross .grid-overlay {
+.image-area.grid-cross .grid-overlay {
   background-image:
     linear-gradient(#fff, #fff),
     linear-gradient(#fff, #fff);
@@ -116,12 +119,7 @@ header p {
   max-width: 100%;
   max-height: 70vh;
   border-radius: 8px;
-  filter:
-    blur(var(--blur))
-    contrast(var(--contrast))
-    saturate(var(--saturate))
-    url(#posterFilter);
-  transition: filter 0.1s;
+  filter: url(#squintFilter);
   display: block;
 }
 
@@ -133,7 +131,7 @@ header p {
 
 .image-wrap.panning #image { cursor: grabbing; }
 
-#image:hover,
+#image:not(.actual-size):hover,
 .stage.show-original #image {
   filter: none;
 }

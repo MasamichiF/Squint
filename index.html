@@ -12,15 +12,17 @@
   </header>
 
   <main>
-    <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="画像を選択またはドラッグ&amp;ドロップ">
+    <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="画像を選択またはドラッグ&amp;ドロップ" aria-describedby="dropzoneError">
       <p>クリックして画像を選択、またはここへドラッグ&amp;ドロップ</p>
-      <p id="dropzoneError" class="dropzone-error" role="alert"></p>
       <input type="file" id="fileInput" accept="image/*" hidden>
     </div>
+    <p id="dropzoneError" class="dropzone-error" role="alert"></p>
 
     <div id="stage" class="stage hidden">
-      <div class="image-wrap">
-        <img id="image" alt="アップロードされた画像" draggable="false">
+      <div class="image-area">
+        <div class="image-wrap">
+          <img id="image" alt="アップロードされた画像" draggable="false">
+        </div>
         <div class="grid-overlay" aria-hidden="true"></div>
       </div>
       <p id="viewStatus" class="view-status" aria-live="polite">現在: スクイント</p>
@@ -60,12 +62,37 @@
 
   <svg width="0" height="0" style="position:absolute">
     <defs>
-      <filter id="posterFilter" color-interpolation-filters="sRGB">
-        <feComponentTransfer>
+      <filter id="squintFilter" x="-15%" y="-15%" width="130%" height="130%">
+        <!-- 光学的ボケ: リニア光で処理（横方向をやや強く＝まぶたの隙間） -->
+        <feGaussianBlur id="fBlur" stdDeviation="3 1.8" color-interpolation-filters="linearRGB"></feGaussianBlur>
+        <!-- コントラスト: sRGB で中間（0.5）を軸にスケール -->
+        <feComponentTransfer color-interpolation-filters="sRGB">
+          <feFuncR id="conR" type="linear" slope="1.3" intercept="-0.15"></feFuncR>
+          <feFuncG id="conG" type="linear" slope="1.3" intercept="-0.15"></feFuncG>
+          <feFuncB id="conB" type="linear" slope="1.3" intercept="-0.15"></feFuncB>
+        </feComponentTransfer>
+        <!-- 彩度: sRGB -->
+        <feColorMatrix id="fSat" type="saturate" values="0.4" color-interpolation-filters="sRGB" result="toned"></feColorMatrix>
+        <!-- 輝度ベース階調化: Y を抽出→量子化し、差分(Yq-Y)を全チャンネルへ等量加算（色相を保持） -->
+        <feColorMatrix in="toned" type="matrix"
+          values="0.2126 0.7152 0.0722 0 0
+                  0.2126 0.7152 0.0722 0 0
+                  0.2126 0.7152 0.0722 0 0
+                  0      0      0      1 0"
+          color-interpolation-filters="sRGB" result="luma"></feColorMatrix>
+        <feComponentTransfer in="luma" color-interpolation-filters="sRGB" result="lumaQ">
           <feFuncR id="posterR" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncR>
           <feFuncG id="posterG" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncG>
           <feFuncB id="posterB" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncB>
         </feComponentTransfer>
+        <!-- 差分 D'=(Yq-Y)/2+0.5 を [0,1] に収めて算出 -->
+        <feComposite in="lumaQ" in2="luma" operator="arithmetic"
+          k1="0" k2="0.5" k3="-0.5" k4="0.5"
+          color-interpolation-filters="sRGB" result="vdelta"></feComposite>
+        <!-- 元の色へ (Yq-Y)=2*D'-1 を加算 -->
+        <feComposite in="toned" in2="vdelta" operator="arithmetic"
+          k1="0" k2="1" k3="2" k4="-1"
+          color-interpolation-filters="sRGB"></feComposite>
       </filter>
     </defs>
   </svg>

@@ -4,6 +4,7 @@ const fileInput = document.getElementById('fileInput');
 const stage = document.getElementById('stage');
 const image = document.getElementById('image');
 const imageWrap = document.querySelector('.image-wrap');
+const imageArea = document.querySelector('.image-area');
 const toggleBtn = document.getElementById('toggleBtn');
 const flipBtn = document.getElementById('flipBtn');
 const zoomBtn = document.getElementById('zoomBtn');
@@ -13,14 +14,14 @@ const viewStatus = document.getElementById('viewStatus');
 
 let imageHovered = false;
 function updateViewStatus() {
-  const showingOriginal = stage.classList.contains('show-original') || imageHovered;
+  const hoverOriginal = imageHovered && !image.classList.contains('actual-size');
+  const showingOriginal = stage.classList.contains('show-original') || hoverOriginal;
   viewStatus.textContent = showingOriginal ? '現在: 原画' : '現在: スクイント';
   viewStatus.classList.toggle('original', showingOriginal);
 }
 image.addEventListener('mouseenter', () => { imageHovered = true; updateViewStatus(); });
 image.addEventListener('mouseleave', () => { imageHovered = false; updateViewStatus(); });
 
-const root = document.documentElement;
 const TOGGLE_DEFAULT_TEXT = '原画を表示（ホバー中も原画）';
 let currentObjectUrl = null;
 
@@ -45,7 +46,7 @@ function loadFile(file) {
   flipBtn.setAttribute('aria-pressed', 'false');
   zoomBtn.classList.remove('active');
   zoomBtn.setAttribute('aria-pressed', 'false');
-  imageWrap.classList.remove('grid-thirds', 'grid-cross');
+  imageArea.classList.remove('grid-thirds', 'grid-cross');
   gridThirdsBtn.classList.remove('active');
   gridThirdsBtn.setAttribute('aria-pressed', 'false');
   gridCrossBtn.classList.remove('active');
@@ -96,35 +97,54 @@ window.addEventListener('drop', (e) => {
   loadFile(e.dataTransfer.files[0]);
 });
 
-const sliders = [
-  { id: 'blur',     out: 'blurOut',     unit: 'px', prop: '--blur',     suffix: 'px', fixed: 1 },
-  { id: 'contrast', out: 'contrastOut', unit: '%',  prop: '--contrast', suffix: '%',  fixed: 0 },
-  { id: 'saturate', out: 'saturateOut', unit: '%',  prop: '--saturate', suffix: '%',  fixed: 0 },
-];
-
-for (const s of sliders) {
-  const input = document.getElementById(s.id);
-  const output = document.getElementById(s.out);
-  const update = () => {
-    const v = parseFloat(input.value);
-    root.style.setProperty(s.prop, v + s.suffix);
-    output.textContent = v.toFixed(s.fixed) + ' ' + s.unit;
-  };
-  input.addEventListener('input', update);
-  update();
-}
-
+const blurInput = document.getElementById('blur');
+const contrastInput = document.getElementById('contrast');
+const saturateInput = document.getElementById('saturate');
 const posterInput = document.getElementById('poster');
+const blurOut = document.getElementById('blurOut');
+const contrastOut = document.getElementById('contrastOut');
+const saturateOut = document.getElementById('saturateOut');
 const posterOut = document.getElementById('posterOut');
+
+const fBlur = document.getElementById('fBlur');
+const fSat = document.getElementById('fSat');
+const VERTICAL_BLUR_RATIO = 0.6;
+const contrastFuncs = ['conR', 'conG', 'conB'].map(id => document.getElementById(id));
 const posterFuncs = ['posterR', 'posterG', 'posterB'].map(id => document.getElementById(id));
 
+function updateBlur() {
+  const b = parseFloat(blurInput.value);
+  fBlur.setAttribute('stdDeviation', `${b} ${(b * VERTICAL_BLUR_RATIO).toFixed(2)}`);
+  blurOut.textContent = b.toFixed(1) + ' px';
+}
+function updateContrast() {
+  const c = parseInt(contrastInput.value, 10) / 100;
+  const intercept = (0.5 * (1 - c)).toFixed(4);
+  for (const f of contrastFuncs) {
+    f.setAttribute('slope', c);
+    f.setAttribute('intercept', intercept);
+  }
+  contrastOut.textContent = contrastInput.value + ' %';
+}
+function updateSaturate() {
+  const s = parseInt(saturateInput.value, 10) / 100;
+  fSat.setAttribute('values', s);
+  saturateOut.textContent = saturateInput.value + ' %';
+}
 function updatePoster() {
   const n = parseInt(posterInput.value, 10);
   const values = Array.from({ length: n }, (_, i) => (i / (n - 1)).toFixed(4)).join(' ');
   for (const f of posterFuncs) f.setAttribute('tableValues', values);
   posterOut.textContent = n + ' 段';
 }
+
+blurInput.addEventListener('input', updateBlur);
+contrastInput.addEventListener('input', updateContrast);
+saturateInput.addEventListener('input', updateSaturate);
 posterInput.addEventListener('input', updatePoster);
+updateBlur();
+updateContrast();
+updateSaturate();
 updatePoster();
 
 const presets = [
@@ -195,13 +215,14 @@ zoomBtn.addEventListener('click', () => {
     imageWrap.scrollLeft = 0;
     imageWrap.scrollTop = 0;
   }
+  updateViewStatus();
 });
 function setGridMode(mode) {
-  imageWrap.classList.remove('grid-thirds', 'grid-cross');
+  imageArea.classList.remove('grid-thirds', 'grid-cross');
   const isThirds = mode === 'thirds';
   const isCross = mode === 'cross';
-  if (isThirds) imageWrap.classList.add('grid-thirds');
-  if (isCross) imageWrap.classList.add('grid-cross');
+  if (isThirds) imageArea.classList.add('grid-thirds');
+  if (isCross) imageArea.classList.add('grid-cross');
   gridThirdsBtn.classList.toggle('active', isThirds);
   gridThirdsBtn.setAttribute('aria-pressed', String(isThirds));
   gridCrossBtn.classList.toggle('active', isCross);
@@ -209,10 +230,10 @@ function setGridMode(mode) {
 }
 
 gridThirdsBtn.addEventListener('click', () => {
-  setGridMode(imageWrap.classList.contains('grid-thirds') ? null : 'thirds');
+  setGridMode(imageArea.classList.contains('grid-thirds') ? null : 'thirds');
 });
 gridCrossBtn.addEventListener('click', () => {
-  setGridMode(imageWrap.classList.contains('grid-cross') ? null : 'cross');
+  setGridMode(imageArea.classList.contains('grid-cross') ? null : 'cross');
 });
 
 let isPanning = false;
