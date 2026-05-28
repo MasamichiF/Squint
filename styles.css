@@ -1,0 +1,240 @@
+:root {
+  --blur: 3px;
+  --contrast: 130%;
+  --saturate: 40%;
+  color-scheme: light dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  margin: 0;
+  padding: 2rem 1rem;
+  max-width: 1600px;
+  margin-inline: auto;
+  line-height: 1.5;
+}
+
+header, .dropzone, .controls {
+  max-width: 900px;
+  margin-inline: auto;
+}
+
+header h1 {
+  margin: 0 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+header p {
+  margin: 0 0 1.5rem;
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.dropzone {
+  border: 2px dashed #aaa;
+  border-radius: 12px;
+  padding: 2.5rem 1rem;
+  text-align: center;
+  cursor: pointer;
+  color: #666;
+  transition: border-color 0.15s, background-color 0.15s;
+}
+
+.dropzone:hover { border-color: #555; }
+
+.dropzone.dragover {
+  border-color: #2a7;
+  background-color: rgba(34, 170, 119, 0.08);
+  color: #2a7;
+}
+
+.dropzone:focus-visible {
+  outline: 2px solid #2a7;
+  outline-offset: 2px;
+}
+
+.dropzone-error {
+  margin: 0.5rem 0 0;
+  color: #c33;
+  font-size: 0.9rem;
+  min-height: 1.2em;
+}
+
+.dropzone-error:empty { display: none; }
+
+.stage {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.stage.hidden { display: none; }
+
+.image-wrap {
+  max-width: 100%;
+  max-height: 70vh;
+  overflow: auto;
+  border-radius: 8px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+#image {
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 8px;
+  filter:
+    blur(var(--blur))
+    contrast(var(--contrast))
+    saturate(var(--saturate))
+    url(#posterFilter);
+  transition: filter 0.1s;
+  display: block;
+}
+
+#image.actual-size {
+  max-width: none;
+  max-height: none;
+  cursor: grab;
+}
+
+.image-wrap.panning #image { cursor: grabbing; }
+
+#image:hover,
+.stage.show-original #image {
+  filter: none;
+}
+
+.view-status {
+  margin: 0.75rem 0 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.view-status.original { color: #2a7; font-weight: 600; }
+
+.stage-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+#toggleBtn, #flipBtn, #zoomBtn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #888;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+#toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover { background: #f0f0f0; }
+
+#flipBtn.active, #zoomBtn.active {
+  background: #2a7;
+  color: #fff;
+  border-color: #2a7;
+}
+
+#image.flipped { transform: scaleX(-1); }
+
+.controls {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.presets button {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid #888;
+  background: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.presets button:hover { background: #f0f0f0; }
+
+.presets button.active {
+  background: #2a7;
+  color: #fff;
+  border-color: #2a7;
+}
+
+.presets button.reset { margin-left: auto; }
+
+.controls label {
+  display: grid;
+  grid-template-columns: 12rem 1fr 5rem;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.controls output {
+  font-variant-numeric: tabular-nums;
+  color: #555;
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .controls label {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  .controls output { text-align: left; }
+}
+
+@media (min-width: 900px) {
+  main:has(#stage:not(.hidden)) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    grid-template-areas:
+      "stage dropzone"
+      "stage controls";
+    gap: 1.5rem;
+    align-items: start;
+  }
+  main:has(#stage:not(.hidden)) #dropzone { grid-area: dropzone; padding: 1.25rem 1rem; }
+  main:has(#stage:not(.hidden)) #stage {
+    grid-area: stage;
+    position: sticky;
+    top: 1rem;
+    margin-top: 0;
+  }
+  main:has(#stage:not(.hidden)) .controls { grid-area: controls; margin-top: 0; }
+  main:has(#stage:not(.hidden)) .controls label {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+  main:has(#stage:not(.hidden)) .controls output { text-align: left; }
+}
+
+@media (prefers-color-scheme: dark) {
+  body { background: #1a1a1a; color: #eee; }
+  header p { color: #aaa; }
+  .dropzone { border-color: #555; color: #aaa; }
+  .dropzone:hover { border-color: #888; }
+  .controls { border-color: #444; }
+  .controls output { color: #bbb; }
+  #toggleBtn, #flipBtn, #zoomBtn { background: #2a2a2a; color: #eee; border-color: #555; }
+  #toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover { background: #3a3a3a; }
+  .view-status { color: #aaa; }
+  .presets { border-bottom-color: #444; }
+  .presets button { background: #2a2a2a; color: #eee; border-color: #555; }
+  .presets button:hover { background: #3a3a3a; }
+}

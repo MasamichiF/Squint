@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>スクイント・シミュレータ</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <h1>スクイント・シミュレータ</h1>
+    <p>美術の「目を細めて見る」技法を再現します。ディテールが消え、明暗と大きな形だけが残ります。</p>
+  </header>
+
+  <main>
+    <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="画像を選択またはドラッグ&amp;ドロップ">
+      <p>クリックして画像を選択、またはここへドラッグ&amp;ドロップ</p>
+      <p id="dropzoneError" class="dropzone-error" role="alert"></p>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+    </div>
+
+    <div id="stage" class="stage hidden">
+      <div class="image-wrap">
+        <img id="image" alt="アップロードされた画像" draggable="false">
+      </div>
+      <p id="viewStatus" class="view-status" aria-live="polite">現在: スクイント</p>
+      <div class="stage-buttons">
+        <button id="toggleBtn" type="button">原画を表示（ホバー中も原画）</button>
+        <button id="flipBtn" type="button" aria-pressed="false">左右反転</button>
+        <button id="zoomBtn" type="button" aria-pressed="false">原寸表示</button>
+      </div>
+    </div>
+
+    <section class="controls">
+      <div id="presets" class="presets" role="group" aria-label="プリセット"></div>
+      <label>
+        <span>ぼかし</span>
+        <input type="range" id="blur" min="0" max="20" step="0.1" value="3">
+        <output id="blurOut">3.0 px</output>
+      </label>
+      <label>
+        <span>コントラスト</span>
+        <input type="range" id="contrast" min="50" max="250" step="1" value="130">
+        <output id="contrastOut">130 %</output>
+      </label>
+      <label>
+        <span>彩度</span>
+        <input type="range" id="saturate" min="0" max="150" step="1" value="40">
+        <output id="saturateOut">40 %</output>
+      </label>
+      <label>
+        <span>ポスタリゼーション（段数）</span>
+        <input type="range" id="poster" min="2" max="16" step="1" value="5">
+        <output id="posterOut">5 段</output>
+      </label>
+    </section>
+  </main>
+
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <filter id="posterFilter" color-interpolation-filters="sRGB">
+        <feComponentTransfer>
+          <feFuncR id="posterR" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncR>
+          <feFuncG id="posterG" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncG>
+          <feFuncB id="posterB" type="discrete" tableValues="0 0.25 0.5 0.75 1"></feFuncB>
+        </feComponentTransfer>
+      </filter>
+    </defs>
+  </svg>
+
+  <script src="script.js"></script>
+</body>
+</html>
