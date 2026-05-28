@@ -2,7 +2,13 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>スクイント・シミュレータ</title>
+  <meta name="description" content="画像の明暗と大きな形を確認するためのスクイント・シミュレータ。美術の「目を細めて見る」技法をブラウザ上で再現します。">
+  <meta property="og:title" content="スクイント・シミュレータ">
+  <meta property="og:description" content="画像のディテールを落とし、明暗と大きな形を確認する美術用観察ツール。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://masamichif.github.io/Squint/">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -17,6 +23,7 @@
       <input type="file" id="fileInput" accept="image/*" hidden>
     </div>
     <p id="dropzoneError" class="dropzone-error" role="alert"></p>
+    <p class="privacy-note">画像はブラウザ内だけで処理され、サーバーには送信されません。</p>
 
     <div id="stage" class="stage hidden">
       <div class="image-area">
