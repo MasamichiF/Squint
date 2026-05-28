@@ -62,7 +62,8 @@ header p {
 .dropzone-error:empty { display: none; }
 
 .privacy-note {
-  margin: 0.5rem 0 0;
+  max-width: 900px;
+  margin: 0.5rem auto 0;
   text-align: center;
   font-size: 0.8rem;
   color: #888;
