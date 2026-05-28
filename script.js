@@ -7,6 +7,8 @@ const imageWrap = document.querySelector('.image-wrap');
 const toggleBtn = document.getElementById('toggleBtn');
 const flipBtn = document.getElementById('flipBtn');
 const zoomBtn = document.getElementById('zoomBtn');
+const gridThirdsBtn = document.getElementById('gridThirdsBtn');
+const gridCrossBtn = document.getElementById('gridCrossBtn');
 const viewStatus = document.getElementById('viewStatus');
 
 let imageHovered = false;
@@ -43,6 +45,11 @@ function loadFile(file) {
   flipBtn.setAttribute('aria-pressed', 'false');
   zoomBtn.classList.remove('active');
   zoomBtn.setAttribute('aria-pressed', 'false');
+  imageWrap.classList.remove('grid-thirds', 'grid-cross');
+  gridThirdsBtn.classList.remove('active');
+  gridThirdsBtn.setAttribute('aria-pressed', 'false');
+  gridCrossBtn.classList.remove('active');
+  gridCrossBtn.setAttribute('aria-pressed', 'false');
   toggleBtn.textContent = TOGGLE_DEFAULT_TEXT;
   updateViewStatus();
 }
@@ -189,6 +196,25 @@ zoomBtn.addEventListener('click', () => {
     imageWrap.scrollTop = 0;
   }
 });
+function setGridMode(mode) {
+  imageWrap.classList.remove('grid-thirds', 'grid-cross');
+  const isThirds = mode === 'thirds';
+  const isCross = mode === 'cross';
+  if (isThirds) imageWrap.classList.add('grid-thirds');
+  if (isCross) imageWrap.classList.add('grid-cross');
+  gridThirdsBtn.classList.toggle('active', isThirds);
+  gridThirdsBtn.setAttribute('aria-pressed', String(isThirds));
+  gridCrossBtn.classList.toggle('active', isCross);
+  gridCrossBtn.setAttribute('aria-pressed', String(isCross));
+}
+
+gridThirdsBtn.addEventListener('click', () => {
+  setGridMode(imageWrap.classList.contains('grid-thirds') ? null : 'thirds');
+});
+gridCrossBtn.addEventListener('click', () => {
+  setGridMode(imageWrap.classList.contains('grid-cross') ? null : 'cross');
+});
+
 let isPanning = false;
 let panStart = null;
 

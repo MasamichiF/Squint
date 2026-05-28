@@ -78,6 +78,38 @@ header p {
   border-radius: 8px;
   display: inline-block;
   vertical-align: top;
+  position: relative;
+}
+
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  mix-blend-mode: difference;
+}
+
+.image-wrap.grid-thirds .grid-overlay,
+.image-wrap.grid-cross .grid-overlay { display: block; }
+
+.image-wrap.grid-thirds .grid-overlay {
+  background-image:
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff);
+  background-size: 100% 1px, 100% 1px, 1px 100%, 1px 100%;
+  background-position: 0 33.333%, 0 66.667%, 33.333% 0, 66.667% 0;
+  background-repeat: no-repeat;
+}
+
+.image-wrap.grid-cross .grid-overlay {
+  background-image:
+    linear-gradient(#fff, #fff),
+    linear-gradient(#fff, #fff);
+  background-size: 100% 1px, 1px 100%;
+  background-position: 0 50%, 50% 0;
+  background-repeat: no-repeat;
 }
 
 #image {
@@ -118,11 +150,12 @@ header p {
 .stage-buttons {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }
 
-#toggleBtn, #flipBtn, #zoomBtn {
+#toggleBtn, #flipBtn, #zoomBtn, #gridThirdsBtn, #gridCrossBtn {
   padding: 0.5rem 1rem;
   border: 1px solid #888;
   background: #fff;
@@ -131,9 +164,11 @@ header p {
   font-size: 0.9rem;
 }
 
-#toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover { background: #f0f0f0; }
+#toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover,
+#gridThirdsBtn:hover, #gridCrossBtn:hover { background: #f0f0f0; }
 
-#flipBtn.active, #zoomBtn.active {
+#flipBtn.active, #zoomBtn.active,
+#gridThirdsBtn.active, #gridCrossBtn.active {
   background: #2a7;
   color: #fff;
   border-color: #2a7;
@@ -231,8 +266,10 @@ header p {
   .dropzone:hover { border-color: #888; }
   .controls { border-color: #444; }
   .controls output { color: #bbb; }
-  #toggleBtn, #flipBtn, #zoomBtn { background: #2a2a2a; color: #eee; border-color: #555; }
-  #toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover { background: #3a3a3a; }
+  #toggleBtn, #flipBtn, #zoomBtn,
+  #gridThirdsBtn, #gridCrossBtn { background: #2a2a2a; color: #eee; border-color: #555; }
+  #toggleBtn:hover, #flipBtn:hover, #zoomBtn:hover,
+  #gridThirdsBtn:hover, #gridCrossBtn:hover { background: #3a3a3a; }
   .view-status { color: #aaa; }
   .presets { border-bottom-color: #444; }
   .presets button { background: #2a2a2a; color: #eee; border-color: #555; }

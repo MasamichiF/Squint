@@ -21,12 +21,15 @@
     <div id="stage" class="stage hidden">
       <div class="image-wrap">
         <img id="image" alt="アップロードされた画像" draggable="false">
+        <div class="grid-overlay" aria-hidden="true"></div>
       </div>
       <p id="viewStatus" class="view-status" aria-live="polite">現在: スクイント</p>
       <div class="stage-buttons">
         <button id="toggleBtn" type="button">原画を表示（ホバー中も原画）</button>
         <button id="flipBtn" type="button" aria-pressed="false">左右反転</button>
         <button id="zoomBtn" type="button" aria-pressed="false">原寸表示</button>
+        <button id="gridThirdsBtn" type="button" aria-pressed="false">三分割</button>
+        <button id="gridCrossBtn" type="button" aria-pressed="false">十字</button>
       </div>
     </div>
 
