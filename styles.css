@@ -13,7 +13,7 @@ body {
   line-height: 1.5;
 }
 
-header, .dropzone, .controls {
+header, .intake, .controls {
   max-width: 900px;
   margin-inline: auto;
 }
@@ -250,7 +250,8 @@ header p {
     gap: 1.5rem;
     align-items: start;
   }
-  main:has(#stage:not(.hidden)) #dropzone { grid-area: dropzone; padding: 1.25rem 1rem; }
+  main:has(#stage:not(.hidden)) .intake { grid-area: dropzone; }
+  main:has(#stage:not(.hidden)) #dropzone { padding: 1.25rem 1rem; }
   main:has(#stage:not(.hidden)) #stage {
     grid-area: stage;
     position: sticky;

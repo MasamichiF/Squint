@@ -18,12 +18,14 @@
   </header>
 
   <main>
-    <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="画像を選択またはドラッグ&amp;ドロップ" aria-describedby="dropzoneError">
-      <p>クリックして画像を選択、またはここへドラッグ&amp;ドロップ</p>
-      <input type="file" id="fileInput" accept="image/*" hidden>
+    <div class="intake">
+      <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-label="画像を選択またはドラッグ&amp;ドロップ" aria-describedby="dropzoneError">
+        <p>クリックして画像を選択、またはここへドラッグ&amp;ドロップ</p>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+      </div>
+      <p id="dropzoneError" class="dropzone-error" role="alert"></p>
+      <p class="privacy-note">画像はブラウザ内だけで処理され、サーバーには送信されません。</p>
     </div>
-    <p id="dropzoneError" class="dropzone-error" role="alert"></p>
-    <p class="privacy-note">画像はブラウザ内だけで処理され、サーバーには送信されません。</p>
 
     <div id="stage" class="stage hidden">
       <div class="image-area">
